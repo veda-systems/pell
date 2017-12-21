@@ -15,7 +15,7 @@ exec /usr/bin/env scsh -o posix-platform-names -e main -s "$0" "$@"
        list))
 
 ;;; join strings in a list
-;;; (strings-join '("foo" "bar" "baz") => "foobarbaz"
+;;; (strings-join '("foo" "bar" "baz") => "foo bar baz"
 (define (strings-join list)
   (cond ((null? list) "")
         (else (string-append
@@ -58,7 +58,7 @@ OPTIONS:
 See https://github.com/ebzzry/pell for more information
 " self *interval* *notify-timeout*)))
 
-(define version "0.0.3")
+(define version "0.0.4")
 
 ;;; ping interval
 (define *interval* 1)
@@ -74,12 +74,12 @@ See https://github.com/ebzzry/pell for more information
 (define *notify-timeout* 5000)
 
 ;;; primary notification audio file
-(define *notification-file*
-  "/usr/share/pell/notification.mp3")
+(define *online-sound* "/usr/share/pell/online.mp3")
+(define *offline-sound* "/usr/share/pell/offline.mp3")
 
 ;;; alternate notification audio file
-(define *notification-file-alternate*
-  (string-append (home-dir) "/.pell/notification.mp3"))
+(define *alternate-online-sound* (string-append (home-dir) "/.pell/online.mp3"))
+(define *alternate-offline-sound* (string-append (home-dir) "/.pell/offline.mp3"))
 
 ;;; procedure to parse command line input
 (define (parse-arguments args)
@@ -133,9 +133,13 @@ See https://github.com/ebzzry/pell for more information
 
 ;;; select notification file from available sources
 (define (select-notification-file)
-  (cond ((file-exists? *notification-file*) *notification-file*)
-        ((file-exists? *notification-file-alternate*) *notification-file-alternate*)
-        (else #f)))
+  (if *beep-online*
+      (cond ((file-exists? *online-sound*) *online-sound*)
+            ((file-exists? *alternate-online-sound*) *alternate-online-sound*)
+            (else #f))
+      (cond ((file-exists? *offline-sound*) *offline-sound*)
+            ((file-exists? *alternate-offline-sound*) *alternate-offline-sound*)
+            (else #f))))
 
 ;;; play the notification audio file using sox's play
 (define (play-notification-file)
