@@ -52,8 +52,8 @@ OPTIONS:
 -i, --interval          Ping interval. Default: ~A seconds
 -b, --beep-online       Beep if host is up
 -B, --beep-offline      Beep if host is down
--n, --no-notify         Disable visual notifications
--N, --notify-timeout    Notification timeout in seconds. Default: ~A seconds
+-n, --notify            Display visual notifications
+-t, --notify-timeout    Notification timeout in seconds. Default: ~A seconds
 
 See https://github.com/ebzzry/pell for more information
 " self *interval* *notify-timeout*)))
@@ -102,7 +102,7 @@ See https://github.com/ebzzry/pell for more information
                 ((-n --notify)
                  (set! *notify* #t)
                  (parse-arguments (cdr args)))
-                ((-N --notify-timeout)
+                ((-t --notify-timeout)
                  (set! *notify-timeout* (cadr args))
                  (parse-arguments (cdr args)))
                 (else args)))))
